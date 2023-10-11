@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px;
+            width: 300px;
+        }
+
+        h1 {
+            color: #007BFF;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+                /* Estilos adicionales para el aviso de privacidad */
+        .container {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            /* Evitar la inyección de scripts */
+            /* Escapar caracteres especiales en el valor del campo de entrada */
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 5px;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Estilos del footer */
+        .footer {
+            text-align: center;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .privacy-link {
+            color: #fff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Estilos para el enlace de seguridad */
+        .security-link {
+            color: #fff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+    <title>App de Tareas</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Tareas</h1>
+        <!-- Validación de entrada: Evitar inyección de scripts -->
+        <input type="text" id="taskInput" placeholder="Agregar una tarea" oninput="this.value = this.value.replace(/[^a-zA-Z0-9\s]/g, '');">
+        <button id="addTask">Agregar Tarea</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const taskInput = document.getElementById("taskInput");
+            const addTaskButton = document.getElementById("addTask");
+            const taskList = document.getElementById("taskList");
+
+            // Cargar tareas desde el almacenamiento local al cargar la página
+            const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            function renderTasks() {
+                taskList.innerHTML = "";
+                savedTasks.forEach((task, index) => {
+                    const listItem = document.createElement("li");
+                    listItem.innerHTML = `
+                        ${task}
+                        <button class="delete-button" data-index="${index}">Eliminar</button>
+                    `;
+                    taskList.appendChild(listItem);
+                });
+            }
+
+            renderTasks();
+
+            addTaskButton.addEventListener("click", function () {
+                // Validación de entrada: Evitar inyección de scripts
+                const taskText = taskInput.value.trim();
+                if (taskText !== "") {
+                    savedTasks.push(taskText);
+                    localStorage.setItem("tasks", JSON.stringify(savedTasks));
+                    taskInput.value = "";
+                    renderTasks();
+                }
+            });
+
+            taskList.addEventListener("click", function (event) {
+                if (event.target.classList.contains("delete-button")) {
+                    const index = event.target.getAttribute("data-index");
+                    savedTasks.splice(index, 1);
+                    localStorage.setItem("tasks", JSON.stringify(savedTasks));
+                    renderTasks();
+                }
+            });
+
+            // Agregar evento para mostrar la política de privacidad al hacer clic en el enlace
+            const privacyLink = document.getElementById("privacyLink");
+            privacyLink.addEventListener("click", function () {
+                alert("Política de Privacidad: Aquí se describe cómo se manejan los datos personales en esta aplicación.");
+            });
+
+            // Enlace a la capacitación en seguridad web
+            const securityLink = document.getElementById("securityLink");
+            securityLink.addEventListener("click", function () {
+                alert("Capacitación en Seguridad Web: Asegúrate de estar al tanto de las mejores prácticas de seguridad web y las amenazas actuales.");
+            });
+        });
+    </script>
+
+    <!-- Footer con aviso de privacidad y enlace de seguridad -->
+    <div class="footer">
+        <p>Política de Privacidad: Esta aplicación recopila datos personales como parte de su funcionalidad. Al utilizar esta aplicación, aceptas nuestra <span class="privacy-link" id="privacyLink">Política de Privacidad</span>. | <span class="security-link" id="securityLink">Capacitación en Seguridad Web</span></p>
+    </div>
+</body>
+</html>
